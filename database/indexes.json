@@ -1,0 +1,17 @@
+{
+  "note": "索引方向均为desc；相等过滤字段按实际控制台要求配置。索引未部署，此文件为D的初始化清单。_id自带唯一性，确定性_id承载组合约束。",
+  "indexes": [
+    {"collection":"applications","fields":["owner_id","created_at","_id"]},
+    {"collection":"applications","fields":["owner_id","status","created_at","_id"]},
+    {"collection":"applications","fields":["status","approval_deadline","created_at","_id"]},
+    {"collection":"applications","fields":["status","consume_expires_at","created_at","_id"]},
+    {"collection":"user_connections","fields":["user_ids","status","created_at","_id"]},
+    {"collection":"invitations","fields":["kind","inviter_id","created_at","_id"]},
+    {"collection":"invitations","fields":["kind","invitee_id","created_at","_id"]},
+    {"collection":"opinions","fields":["approver_id","created_at","_id"]},
+    {"collection":"groups","fields":["member_ids","created_at","_id"]},
+    {"collection":"applications","fields":["participant_ids","created_at","_id"]},
+    {"collection":"approval_participants","fields":["group_id","user_id","qualification_status","created_at","_id"]},
+    {"collection":"outbox_events","fields":["status","next_retry_at","created_at","_id"]}
+  ]
+}

@@ -1,0 +1,582 @@
+{
+  "version": "1.1",
+  "group_rule": "NORMAL -> groups.submitApplication -> GROUP",
+  "actions": {
+    "auth.login": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "auth.profile": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "nickname": {
+        "type": "string",
+        "min": 1,
+        "max": 64,
+        "optional": true
+      },
+      "avatar_file_id": {
+        "type": "string",
+        "min": 1,
+        "max": 256,
+        "optional": true
+      }
+    },
+    "friends.createInvitation": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "friends.claimInvitation": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "token": {
+        "type": "string",
+        "min": 32,
+        "max": 128
+      }
+    },
+    "friends.confirmInvitation": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "invitation_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "decision": {
+        "type": "enum",
+        "values": [
+          "ACCEPT",
+          "REJECT"
+        ]
+      }
+    },
+    "friends.list": {
+      "cursor": {
+        "type": "string",
+        "min": 1,
+        "max": 4096,
+        "optional": true
+      },
+      "limit": {
+        "type": "int",
+        "min": 1,
+        "max": 50,
+        "default": 20
+      }
+    },
+    "friends.invitations": {
+      "cursor": {
+        "type": "string",
+        "min": 1,
+        "max": 4096,
+        "optional": true
+      },
+      "limit": {
+        "type": "int",
+        "min": 1,
+        "max": 50,
+        "default": 20
+      },
+      "direction": {
+        "type": "enum",
+        "values": [
+          "SENT",
+          "RECEIVED"
+        ]
+      }
+    },
+    "applications.create": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "description": {
+        "type": "string",
+        "min": 1,
+        "max": 1000
+      },
+      "price_cent": {
+        "type": "int",
+        "min": 1,
+        "max": 9007199254740991
+      },
+      "tag": {
+        "type": "enum",
+        "values": [
+          "数码",
+          "服饰",
+          "零食",
+          "游戏",
+          "日用品"
+        ]
+      },
+      "image_ids": {
+        "type": "array",
+        "item": {
+          "type": "string",
+          "min": 1,
+          "max": 256
+        },
+        "min": 0,
+        "max": 9,
+        "default": [],
+        "unique": true
+      },
+      "approval_hours": {
+        "type": "enum",
+        "values": [
+          12,
+          24,
+          72
+        ],
+        "default": 24
+      },
+      "mode": {
+        "type": "enum",
+        "values": [
+          "NORMAL",
+          "JOINT"
+        ],
+        "default": "NORMAL"
+      },
+      "approver_ids": {
+        "type": "array",
+        "item": {
+          "type": "string",
+          "min": 1,
+          "max": 64
+        },
+        "min": 2,
+        "max": 3,
+        "optional": true,
+        "unique": true,
+        "sorted": true
+      },
+      "review_rule": {
+        "type": "enum",
+        "values": [
+          "ALL_APPROVE",
+          "ONE_VETO"
+        ],
+        "optional": true
+      }
+    },
+    "applications.list": {
+      "cursor": {
+        "type": "string",
+        "min": 1,
+        "max": 4096,
+        "optional": true
+      },
+      "limit": {
+        "type": "int",
+        "min": 1,
+        "max": 50,
+        "default": 20
+      },
+      "status": {
+        "type": "enum",
+        "values": [
+          "PENDING",
+          "APPROVED",
+          "REJECTED",
+          "WITHDRAWN",
+          "EXPIRED"
+        ],
+        "optional": true
+      }
+    },
+    "applications.get": {
+      "application_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "applications.share": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "expected_version": {
+        "type": "int",
+        "min": 1,
+        "max": 9007199254740991
+      },
+      "application_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "receiver_ids": {
+        "type": "array",
+        "item": {
+          "type": "string",
+          "min": 1,
+          "max": 64
+        },
+        "min": 1,
+        "max": 10,
+        "unique": true,
+        "sorted": true
+      }
+    },
+    "applications.getInvitation": {
+      "card_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "applications.acceptInvitation": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "invitation_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "applications.invitations": {
+      "cursor": {
+        "type": "string",
+        "min": 1,
+        "max": 4096,
+        "optional": true
+      },
+      "limit": {
+        "type": "int",
+        "min": 1,
+        "max": 50,
+        "default": 20
+      },
+      "direction": {
+        "type": "enum",
+        "values": [
+          "SENT",
+          "RECEIVED"
+        ]
+      },
+      "status": {
+        "type": "enum",
+        "values": [
+          "PENDING",
+          "ACCEPTED",
+          "EXPIRED",
+          "CLOSED"
+        ],
+        "optional": true
+      }
+    },
+    "applications.withdraw": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "expected_version": {
+        "type": "int",
+        "min": 1,
+        "max": 9007199254740991
+      },
+      "application_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "applications.setValidity": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "expected_version": {
+        "type": "int",
+        "min": 1,
+        "max": 9007199254740991
+      },
+      "application_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "consume_expires_at": {
+        "type": "int",
+        "min": 1,
+        "max": 9007199254740991
+      }
+    },
+    "support.getFileUrls": {
+      "file_ids": {
+        "type": "array",
+        "item": {
+          "type": "string",
+          "min": 1,
+          "max": 256
+        },
+        "min": 1,
+        "max": 9,
+        "unique": true
+      }
+    },
+    "approvals.submit": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "expected_version": {
+        "type": "int",
+        "min": 1,
+        "max": 9007199254740991
+      },
+      "application_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "decision": {
+        "type": "enum",
+        "values": [
+          "APPROVE",
+          "REJECT"
+        ]
+      },
+      "comment": {
+        "type": "string",
+        "min": 0,
+        "max": 500,
+        "optional": true
+      }
+    },
+    "approvals.progress": {
+      "application_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "approvals.history": {
+      "cursor": {
+        "type": "string",
+        "min": 1,
+        "max": 4096,
+        "optional": true
+      },
+      "limit": {
+        "type": "int",
+        "min": 1,
+        "max": 50,
+        "default": 20
+      },
+      "from_to": {
+        "type": "array",
+        "item": {
+          "type": "int",
+          "min": 0,
+          "max": 9007199254740991
+        },
+        "min": 2,
+        "max": 2,
+        "optional": true
+      }
+    },
+    "reviews.start": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "expected_version": {
+        "type": "int",
+        "min": 1,
+        "max": 9007199254740991
+      },
+      "application_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "approver_ids": {
+        "type": "array",
+        "item": {
+          "type": "string",
+          "min": 1,
+          "max": 64
+        },
+        "min": 2,
+        "max": 3,
+        "unique": true,
+        "sorted": true
+      },
+      "rule": {
+        "type": "enum",
+        "values": [
+          "ALL_APPROVE",
+          "ONE_VETO"
+        ],
+        "default": "ALL_APPROVE"
+      }
+    },
+    "reviews.progress": {
+      "application_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "groups.create": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "name": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "groups.list": {
+      "cursor": {
+        "type": "string",
+        "min": 1,
+        "max": 4096,
+        "optional": true
+      },
+      "limit": {
+        "type": "int",
+        "min": 1,
+        "max": 50,
+        "default": 20
+      }
+    },
+    "groups.get": {
+      "group_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "groups.invite": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "group_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "invitee_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "groups.getInvitation": {
+      "invitation_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "groups.acceptInvitation": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "invitation_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "groups.invitations": {
+      "cursor": {
+        "type": "string",
+        "min": 1,
+        "max": 4096,
+        "optional": true
+      },
+      "limit": {
+        "type": "int",
+        "min": 1,
+        "max": 50,
+        "default": 20
+      },
+      "direction": {
+        "type": "enum",
+        "values": [
+          "SENT",
+          "RECEIVED"
+        ]
+      }
+    },
+    "groups.submitApplication": {
+      "idempotency_key": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "expected_version": {
+        "type": "int",
+        "min": 1,
+        "max": 9007199254740991
+      },
+      "group_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      },
+      "application_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    },
+    "groups.todos": {
+      "cursor": {
+        "type": "string",
+        "min": 1,
+        "max": 4096,
+        "optional": true
+      },
+      "limit": {
+        "type": "int",
+        "min": 1,
+        "max": 50,
+        "default": 20
+      },
+      "group_id": {
+        "type": "string",
+        "min": 1,
+        "max": 64
+      }
+    }
+  }
+}

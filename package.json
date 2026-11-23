@@ -1,0 +1,6 @@
+{
+  "name": "expense-approval-c", "version": "1.0.0", "private": true,
+  "description": "消费审批小程序 C 后端与原始示例工程",
+  "scripts": { "test": "node --test test/business.test.js test/cloud-store.test.js", "demo": "node scripts/demo.js" },
+  "engines": { "node": ">=18" }
+}

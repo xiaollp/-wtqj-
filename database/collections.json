@@ -1,0 +1,5 @@
+{
+  "collections": ["users", "user_connections", "invitations", "applications", "application_images", "approval_participants", "opinions", "groups", "group_members", "group_applications", "share_cards", "share_receivers", "idempotency_records", "outbox_events", "unique_keys", "file_refs", "blocks"],
+  "client_permissions": { "read": false, "write": false },
+  "note": "仅为交付清单，不会自动修改云环境。由D在控制台创建集合并设置客户端读写均为false。业务通过可信云函数访问。"
+}

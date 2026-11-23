@@ -1,0 +1,10 @@
+'use strict';
+const fs = require('node:fs');
+const path = require('node:path');
+const { createApi } = require('../cloudfunctions/api/app');
+const { MemoryStore } = require('../cloudfunctions/api/infra/memory-store');
+const api = createApi({ store: new MemoryStore(), secret: 'contract-export-only-not-a-cloud-secret' });
+const target = path.join(__dirname, '../docs/api-contracts.json');
+fs.mkdirSync(path.dirname(target), { recursive: true });
+fs.writeFileSync(target, JSON.stringify({ version: '1.1', group_rule: 'NORMAL -> groups.submitApplication -> GROUP', actions: api.contracts() }, null, 2) + '\n');
+console.log('Exported', Object.keys(api.contracts()).length, 'actions');
