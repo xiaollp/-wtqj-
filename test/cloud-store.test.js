@@ -29,11 +29,16 @@ test('缺文档与缺集合不能混淆；网络故障不当作用户不存在',
 });
 test('云扫描生成稳定键集游标条件、排序及分页上限', async () => {
   const commands = [];
-  const _ = Object.fromEntries(['all', 'gte', 'lte', 'in', 'and', 'or', 'lt'].map(op => [op, (...args) => ({ op, args })]));
+  const _ = Object.fromEntries(['all', 'gte', 'lte', 'in', 'and', 'or', 'lt', 'gt'].map(op => [op, (...args) => ({ op, args })]));
   const query = { where(c) { commands.push(['where', c]); return this; }, orderBy(...a) { commands.push(['order', ...a]); return this; },
     limit(n) { commands.push(['limit', n]); return this; }, async get() { return { data: [{ _id: 'x' }] }; } };
   const store = new CloudStore({ command: _, collection: () => query });
   assert.equal((await store.scan('applications', { where: { owner_id: 'u', created_at: { $gte: 1, $lte: 10 } }, after: { created_at: 5, _id: 'a' }, limit: 21 }))[0]._id, 'x');
   assert.deepEqual(commands.slice(1), [['order', 'created_at', 'desc'], ['order', '_id', 'desc'], ['limit', 21]]);
   assert.equal(commands[0][1].op, 'and');
+
+  commands.length = 0;
+  await store.scan('event_consumptions', { where: { status: 'PENDING' }, after: { created_at: 10, _id: 'b' }, order: 'asc', limit: 5 });
+  assert.deepEqual(commands.slice(1), [['order', 'created_at', 'asc'], ['order', '_id', 'asc'], ['limit', 5]]);
+  assert.equal(commands[0][1].args[0][1].args[0][0].created_at.op, 'gt');
 });

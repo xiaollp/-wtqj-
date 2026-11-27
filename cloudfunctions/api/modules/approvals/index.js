@@ -22,7 +22,8 @@ exports.register = (register, s) => {
         && Number.isSafeInteger(checked.checked_at) && checked.checked_at >= 0)) fail('CONTENT_CHECK_UNAVAILABLE', '内容审核结果无效', true);
       const op = { _id: oid, application_id: a._id, approver_id: uid, decision: p.decision, comment: p.comment || null,
         content_status: 'VISIBLE', content_hash: p.comment ? hash(p.comment) : null, created_at: s.now() };
-      await tx.set('opinions', oid, op); a.opinion_count++;
+      const { _id, ...record } = op;
+      await s.repositories.opinions.insert({ ...record, opinion_id: _id }, tx); a.opinion_count++;
       const qid = participantId(a._id, uid), q = await tx.get('approval_participants', qid); q.decision = p.decision; await tx.set('approval_participants', qid, q);
       const opinions = [];
       for (const pid of a.participant_ids) { const o = await tx.get('opinions', opinionId(a._id, pid)); if (o) opinions.push(o); }

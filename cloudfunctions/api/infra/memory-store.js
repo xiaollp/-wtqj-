@@ -20,10 +20,14 @@ class MemoryStore {
     if (!this.data.has(collection)) this.data.set(collection, new Map());
     this.data.get(collection).set(id, structuredClone({ ...record, _id: id }));
   }
-  async scan(collection, { where = {}, after = null, limit = 21 } = {}) {
+  async scan(collection, { where = {}, after = null, limit = 21, order = 'desc' } = {}) {
+    const compare = (left, right) => {
+      const byKey = left.created_at - right.created_at || (left._id < right._id ? -1 : left._id > right._id ? 1 : 0);
+      return order === 'asc' ? byKey : -byKey;
+    };
     return [...(this.data.get(collection)?.values() ?? [])].filter(r => matches(r, where))
-      .filter(r => !after || r.created_at < after.created_at || (r.created_at === after.created_at && r._id < after._id))
-      .sort((a, b) => b.created_at - a.created_at || (a._id < b._id ? 1 : a._id > b._id ? -1 : 0))
+      .filter(r => !after || compare(r, after) > 0)
+      .sort(compare)
       .slice(0, limit).map(r => structuredClone(r));
   }
   async runTransaction(handler) {

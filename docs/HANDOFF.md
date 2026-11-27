@@ -56,6 +56,8 @@ groups.create/list/get/invite/getInvitation/acceptInvitation/invitations/submitA
 
 ## 给 D
 
+数据库部署与现行 Repository、Outbox 接口见 [成员 D 数据库交接](D-DATABASE.md)。
+
 ### C已提供的公共函数
 
 路径相对cloudfunctions/api。直接导出函数在api入口初始化后可用；独立管理函数应显式创建对应服务，不依赖api进程状态。
@@ -89,7 +91,7 @@ visibility.js已有投影：opinions.content_status=VISIBLE才展示；下架写
 
 业务集合沿用，新增unique_keys（组名占位）、file_refs、blocks、invitations。确定性_id保证组合唯一性。ApplicationRecord的participant_ids/invitation_ids是最多20人的有界索引，不替代独立集合；GroupRecord的member_ids最多21个，成员关系仍单独持久化。
 
-幂等成功加密结果保留7天，键摘要墓碑再保留30天；代码不自动删除墓碑，超期拒绝重新执行，D可按最终留存策略清理。APP_SECRET长期稳定，不记录token/OpenID/完整锐评。集合与索引清单见database目录。
+幂等成功加密结果保留 7 天，受控维护任务随后压缩过期响应并保留键摘要以阻止重放。APP_SECRET 长期稳定，日志需脱敏。集合与索引清单见 database 目录。
 
 C同事务写outbox_events，数据库_id映射为event_id后由D消费：
 
@@ -100,7 +102,7 @@ const event = {...record, event_id: record._id};
 
 type为APPLICATION_PARTICIPANTS_READY、APPLICATION_RESULT_FINALIZED、APPLICATION_WITHDRAWN、APPLICATION_VALIDITY_CHANGED、APPLICATION_CONSUME_EXPIRED；payload含application_id、owner_id、participant_ids、status、final_decision、expire_reason。
 
-D负责通知/总结消费者、event_id+consumer去重、每个消费方状态和有限重试；所有必需消费者结束或明确跳过才设DONE。旧版本不能覆盖新总结。撤回不自动总结；消费失效保留原决定，不重复审批结果通知。C未实现消费者，不伪造已处理。
+数据库层按 event_id 与 consumer 去重，保存租约及有限重试状态，并在必需消费者均完成或明确跳过时设为 DONE。旧版本不能覆盖新总结。通知和总结业务处理通过这些接口接入，撤回不生成总结，消费失效保留原决定。
 
 普通业务动作映射合并到modules/extensions.js，处理器 `(params,ctx)=>data`；ctx含request_id、trustedContext、user_id、account_status。也可用 `{schema,handler}`描述项统一参数校验。普通函数形式需自行validateParams和写权限检查；管理员走独立保护入口。
 

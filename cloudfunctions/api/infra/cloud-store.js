@@ -29,7 +29,7 @@ class PointTransaction {
 class CloudStore {
   constructor(db) { this.db = db; }
   async get(collection, id) { return new PointTransaction(this.db).get(collection, id); }
-  async scan(collection, { where = {}, after = null, limit = 21 } = {}) {
+  async scan(collection, { where = {}, after = null, limit = 21, order = 'desc' } = {}) {
     const _ = this.db.command;
     const filter = {};
     for (const [k, v] of Object.entries(where)) {
@@ -45,11 +45,12 @@ class CloudStore {
         filter[k] = parts.length === 1 ? parts[0] : _.and(parts);
       } else filter[k] = v;
     }
+    const beyond = value => order === 'asc' ? _.gt(value) : _.lt(value);
     const condition = after ? _.and([filter, _.or([
-      { created_at: _.lt(after.created_at) },
-      { created_at: after.created_at, _id: _.lt(after._id) }
+      { created_at: beyond(after.created_at) },
+      { created_at: after.created_at, _id: beyond(after._id) }
     ])]) : filter;
-    return (await this.db.collection(collection).where(condition).orderBy('created_at', 'desc').orderBy('_id', 'desc').limit(limit).get()).data;
+    return (await this.db.collection(collection).where(condition).orderBy('created_at', order).orderBy('_id', order).limit(limit).get()).data;
   }
   async runTransaction(handler) {
     try {

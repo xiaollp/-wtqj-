@@ -4,6 +4,8 @@ const { fail } = require('./common/errors');
 const { buildAuth } = require('./common/auth');
 const { key, hash, canonical, participantId, opinionId, requireThat: need } = require('./common/utils');
 const { createIdempotency } = require('./infra/idempotency');
+const { createBusinessRepositories } = require('./infra/repositories/business');
+const { createOutboxRepository } = require('./infra/repositories/outbox');
 const content = require('./infra/adapters/content');
 const files = require('./infra/adapters/files');
 const { createVisibility } = require('./infra/adapters/visibility');
@@ -47,11 +49,16 @@ function createServices({ store, secret, clock = Date.now, adapters = {} }) {
   };
   s.version = (a, p) => need(a.version === p.expected_version, 'STATE_CONFLICT', '状态已更新，请刷新', { current_version: a.version, current_status: a.status });
   s.pending = a => need(a.status === 'PENDING' && clock() < a.approval_deadline, 'APPLICATION_CLOSED', '申请已结束或已到期');
-  s.saveApp = async (tx, a) => { a.version++; a.updated_at = clock(); await tx.set('applications', a._id, a); };
+  s.saveApp = async (tx, a) => {
+    const { _id, version, ...fields } = a;
+    const saved = await s.repositories.applications.updateIfVersion(_id, version, { ...fields, updated_at: clock() }, tx);
+    a.version = saved.version;
+    a.updated_at = saved.updated_at;
+  };
   s.event = async (tx, a, type, participantIds = a.participant_ids) => {
     const eventId = key('event', a._id, a.version, type);
     if (await tx.get('outbox_events', eventId)) return;
-    await tx.set('outbox_events', eventId, { type, aggregate_id: a._id, version: a.version,
+    await tx.set('outbox_events', eventId, { type, aggregate_id: a._id, version: a.version, schema_version: 1,
       payload: { application_id: a._id, owner_id: a.owner_id, participant_ids: participantIds,
         status: a.status, final_decision: a.final_decision, expire_reason: a.expire_reason },
       status: 'PENDING', attempts: 0, next_retry_at: clock(), created_at: clock() });
@@ -119,6 +126,7 @@ function createServices({ store, secret, clock = Date.now, adapters = {} }) {
     expires_at: i.expires_at, application_id: i.application_id || null, group_id: i.group_id || null });
   const idempotency = createIdempotency({ store, secret, now: clock });
   s.executeIdempotent = idempotency.executeIdempotent;
+  s.compactIdempotency = idempotency.compactExpired;
   s.write = async (ctx, action, params, handler, prepare = async () => null, bootstrap = false) => {
     const identity = bootstrap ? { user_id: key('login', ctx.trustedContext.OPENID) } : await s.requireUser(ctx.trustedContext);
     const token = params.idempotency_key;
@@ -166,12 +174,15 @@ function createServices({ store, secret, clock = Date.now, adapters = {} }) {
   };
   s.expireApplications = async ({ batchSize = 100 } = {}) => {
     need(Number.isSafeInteger(batchSize) && batchSize >= 1 && batchSize <= 100, 'VALIDATION_FAILED', '批次大小应为1～100');
-    const pending = await store.scan('applications', { where: { status: 'PENDING', approval_deadline: { $lte: clock() } }, limit: batchSize });
-    const approved = await store.scan('applications', { where: { status: 'APPROVED', consume_expires_at: { $gte: 1, $lte: clock() } }, limit: batchSize });
+    const pending = await store.scan('applications', { where: { status: 'PENDING', approval_deadline: { $lte: clock() } }, order: 'asc', limit: batchSize });
+    const approved = await store.scan('applications', { where: { status: 'APPROVED', consume_expires_at: { $gte: 1, $lte: clock() } },
+      order: 'asc', limit: batchSize });
     let expired = 0;
     for (const a of [...pending, ...approved]) if (await s.expire(a._id)) expired++;
     return { scanned: pending.length + approved.length, expired };
   };
+  s.repositories = createBusinessRepositories({ store, page: s.page, now: clock });
+  s.outbox = createOutboxRepository({ store, now: clock });
   return s;
 }
 module.exports = { createServices, DAY, summary, brief, self };

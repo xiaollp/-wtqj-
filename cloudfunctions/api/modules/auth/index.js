@@ -7,7 +7,8 @@ exports.register = (register, s) => {
     if (!user) {
       user = { _id: uid, openid: ctx.trustedContext.OPENID, nickname: null, avatar_file_id: null,
         account_status: 'NORMAL', violation_count: 0, created_at: s.now(), updated_at: s.now() };
-      await tx.set('users', uid, user);
+      const { _id, ...record } = user;
+      await s.repositories.users.insert({ ...record, user_id: _id }, tx);
     }
     return { user: s.self(user) };
   }, undefined, true), { login: true });

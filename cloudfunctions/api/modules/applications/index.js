@@ -31,7 +31,8 @@ exports.register = (register, s) => {
         need(friendId !== uid && (await tx.get('user_connections', pairId(uid, friendId)))?.status === 'CONFIRMED', 'VALIDATION_FAILED', '请仅选择已确认好友且不能选择本人');
         await s.normalUser(friendId, tx); await s.addParticipant(tx, a, friendId, 'JOINT', appId);
       }
-      await tx.set('applications', appId, a);
+      const { _id, ...record } = a;
+      await s.repositories.applications.insert({ ...record, application_id: _id }, tx);
       if (a.mode === 'JOINT') await s.event(tx, a, 'APPLICATION_PARTICIPANTS_READY');
       return { application_id: appId, status: a.status, version: a.version, approval_deadline: a.approval_deadline, share_info: null };
     }, async uid => {

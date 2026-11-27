@@ -1,6 +1,7 @@
 # 消费审批微信小程序 C 后端
 
 成员 A 的小程序页面、服务签名、路由和联调入口见 [成员 A 交接](docs/A-HANDOFF.md)。
+成员 D 的集合、索引同步命令和事务接口见 [成员 D 数据库交接](docs/D-DATABASE.md)。
 
 在原始示例工程上新增31个后端action：登录资料、好友、申请、审批资格、普通审批、多人会审、小组及文件预览入口。使用 JavaScript / CommonJS，要求 Node.js 18或以上。A/B负责的前端示例保留，未代为实现业务页面。
 
@@ -40,7 +41,7 @@ node scripts/demo.js
 
 1. 用微信开发者工具打开本目录，保留团队真实AppID。原模板AppID随原文件保留，不表示你拥有它。
 2. 在 `miniprogram/config.js` 配置团队开发云环境 ID。
-3. D按database清单创建集合、设置业务集合客户端read/write均为false、配置索引。
+3. 按成员 D 数据库交接说明准备业务集合、客户端权限和索引。
 4. api服务端环境变量配置APP_SECRET，至少32个随机字符，所有实例相同且长期稳定；不要把密钥写进小程序或使用.env.example占位文字。
 5. 在api目录安装SDK后上传云函数api，选择实际支持Node.js 18+的运行时。可使用开发者工具安装依赖；按锁文件复现时运行 `pnpm install --frozen-lockfile --ignore-scripts`。
 6. 从小程序账号调用auth.login，再联调无图的同意审批链。控制台测试没有可信OPENID时返回AUTH_REQUIRED，不能通过请求参数伪造身份。
@@ -79,11 +80,11 @@ const response = await wx.cloud.callFunction({
 | 下架/拉黑状态 | infra/adapters/visibility.js | 已有保守过滤，D按交接字段维护状态 |
 | 通知、统计、总结和事件消费 | outbox_events及D模块 | 事件持久化，不伪造已通知或已生成总结 |
 
-D可直接复用本次实现的事务、幂等、Repository，也可按HANDOFF.md的存储接口替换CloudStore。
+通知、统计和总结可复用成员 D 的事务、Repository 和事件消费存储接口。
 
 ## 到期扫描
 
-请求路径已经检查服务端截止时间，不依赖定时扫描才阻止过期审批。maintenance.js提供批量扫描，未注册公开action，未创建平台定时器。
+请求路径按服务端截止时间拦截过期审批。maintenance.js 提供申请到期和幂等响应压缩扫描，仅供受控任务调用。
 
 D在受控维护函数部署同一代码包并设置入口maintenance.main，每分钟触发一次，具体入口配置以实际控制台为准。服务端配置独立MAINTENANCE_TOKEN（至少32随机字符），触发输入为 `{maintenance_token:对应密钥}`。未配置、缺失或错误密钥均拒绝执行。该密钥只保存在服务端触发器，不能放进小程序。此函数和定时器尚未部署。
 

@@ -13,5 +13,7 @@ exports.main = async (event = {}) => {
     fail('AUTH_REQUIRED', '仅允许受控维护任务调用');
   const cloud = require('wx-server-sdk'); cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
   const s = createServices({ store: new CloudStore(cloud.database({ throwOnNotFound: false })), secret: process.env.APP_SECRET });
-  return s.expireApplications({ batchSize: 100 });
+  const expired = await s.expireApplications({ batchSize: 100 });
+  const idempotency = await s.compactIdempotency({ batchSize: 50 });
+  return { ...expired, idempotency };
 };
