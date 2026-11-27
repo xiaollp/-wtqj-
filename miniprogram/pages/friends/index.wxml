@@ -1,0 +1,35 @@
+<view class="screen">
+  <view class="panel stack">
+    <view class="heading">添加审批好友</view>
+    <view class="muted">好友领取微信邀请后，请在「我发出的」确认对方身份。</view>
+    <button class="btn" loading="{{saving}}" disabled="{{saving}}" bindtap="create">生成好友邀请</button>
+    <button wx:if="{{card}}" class="btn soft" open-type="share">转发好友邀请</button>
+    <view wx:if="{{writeError}}" class="error">{{writeError}}<view wx:if="{{requestId}}" class="muted" selectable>请求编号 {{requestId}}</view></view>
+  </view>
+  <view class="options field">
+    <view wx:for="{{tabs}}" wx:key="id" role="button" class="option {{tab === item.id ? 'active' : ''}}" data-tab="{{item.id}}" bindtap="switchTab">{{item.label}}</view>
+  </view>
+  <view class="panel">
+    <block wx:if="{{tab === 'friends'}}">
+      <view wx:for="{{items}}" wx:key="user_id" class="item">{{item.nickname || '微信好友'}}</view>
+    </block>
+    <block wx:else>
+      <view wx:for="{{items}}" wx:key="invitation_id" class="item stack">
+        <view class="row">
+          <text>{{tab === 'SENT' ? (item.invitee.nickname || (item.invitee ? '微信好友' : '尚未领取')) : (item.inviter.nickname || '微信好友')}}</text>
+          <text class="badge">{{item.statusLabel}}</text>
+        </view>
+        <view class="muted">邀请截止 {{item.expiry}}</view>
+        <view wx:if="{{tab === 'SENT' && item.status === 'CLAIMED'}}" class="options">
+          <button class="btn inline" disabled="{{saving}}" data-id="{{item.invitation_id}}" data-decision="ACCEPT" bindtap="confirm">确认好友</button>
+          <button class="btn soft inline" disabled="{{saving}}" data-id="{{item.invitation_id}}" data-decision="REJECT" bindtap="confirm">拒绝</button>
+        </view>
+      </view>
+    </block>
+    <view wx:if="{{loading}}" class="empty">正在加载…</view>
+    <view wx:elif="{{!items.length && !error}}" class="empty">{{tab === 'friends' ? '还没有已确认好友。' : '暂无好友邀请。'}}</view>
+    <view wx:if="{{error}}" class="error">{{error}}</view>
+    <button wx:if="{{error}}" class="btn soft" bindtap="retry">重试</button>
+    <button wx:elif="{{cursor && !loading}}" class="btn soft" bindtap="more">加载更多</button>
+  </view>
+</view>

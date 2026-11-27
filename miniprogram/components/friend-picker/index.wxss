@@ -1,0 +1,8 @@
+.picker-hint { font-size: 24rpx; color: #49636f; padding: 10rpx 0; }
+.friend { border-bottom: 1rpx solid #d8e4e9; }
+.friend-button { display: flex; align-items: center; justify-content: space-between; text-align: left; background: #fff; color: #142a37; padding: 10rpx 14rpx; font-size: 27rpx; min-height: 70rpx; }
+.friend-button::after, .picker-more::after { border: 0; }
+.check, .picker-empty, .picker-more { color: #00656e; }
+.picker-empty { padding: 18rpx 0; }
+.picker-more { margin: 12rpx 0; font-size: 25rpx; background: #e1eef0; }
+.picker-error { color: #8a281e; }

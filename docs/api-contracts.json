@@ -378,6 +378,20 @@
         "max": 64
       }
     },
+    "approvals.todos": {
+      "cursor": {
+        "type": "string",
+        "min": 1,
+        "max": 4096,
+        "optional": true
+      },
+      "limit": {
+        "type": "int",
+        "min": 1,
+        "max": 50,
+        "default": 20
+      }
+    },
     "approvals.history": {
       "cursor": {
         "type": "string",

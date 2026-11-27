@@ -1,0 +1,19 @@
+<view class="screen">
+  <view class="panel stack">
+    <view class="heading">消费审批邀请</view>
+    <view wx:if="{{loading}}" class="muted">正在验证邀请…</view>
+    <block wx:elif="{{loadError}}">
+      <view class="error">{{loadError}}</view>
+      <button class="btn soft" bindtap="load">重新验证</button>
+    </block>
+    <block wx:elif="{{invitation}}">
+      <view>{{invitation.inviter.nickname || '微信好友'}} 邀请你审批一笔消费申请。</view>
+      <view class="muted">{{invitation.statusLabel}}　截止 {{invitation.expiry}}</view>
+      <button wx:if="{{canAccept}}" class="btn" loading="{{saving}}" disabled="{{saving}}" bindtap="accept">接受邀请</button>
+      <button wx:elif="{{acceptedId || invitation.status === 'ACCEPTED'}}" class="btn" bindtap="openApplication">查看申请</button>
+    </block>
+    <view wx:elif="{{loaded}}" class="muted">请把卡片转发给生成邀请时指定的好友。</view>
+    <view wx:if="{{writeError}}" class="error">{{writeError}}<view wx:if="{{requestId}}" class="muted" selectable>请求编号 {{requestId}}</view></view>
+  </view>
+  <navigator class="item" open-type="reLaunch" url="/pages/index/index">返回首页 ›</navigator>
+</view>

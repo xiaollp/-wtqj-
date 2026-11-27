@@ -1,0 +1,79 @@
+<view class="screen">
+  <view class="panel" wx:if="{{createdId}}">
+    <view class="heading">申请已提交</view>
+    <button class="btn" bindtap="openCreated">查看申请</button>
+  </view>
+  <block wx:else>
+    <view class="panel">
+      <view class="field">
+        <label class="label" for="description">物品描述 *</label>
+        <textarea id="description" class="input" maxlength="1000" placeholder="想买什么？用来做什么？" value="{{description}}" data-field="description" disabled="{{saving}}" bindinput="edit" />
+        <view class="form-hint">{{description.length}} / 1000</view>
+        <view wx:if="{{formErrors.description}}" class="error">{{formErrors.description}}</view>
+      </view>
+      <view class="field">
+        <label class="label" for="price">预估价格（元）*</label>
+        <input id="price" class="input" type="digit" placeholder="0.00" value="{{price}}" data-field="price" disabled="{{saving}}" bindinput="edit" />
+        <view wx:if="{{formErrors.price}}" class="error">{{formErrors.price}}</view>
+        <view wx:if="{{large}}" class="notice">金额达到 {{threshold}}，可请多位好友一起会审。</view>
+      </view>
+      <view class="field">
+        <view class="label">消费标签 *</view>
+        <view class="options">
+          <view wx:for="{{tags}}" wx:key="*this" class="option {{item === tag ? 'active' : ''}}" role="button" data-field="tag" data-value="{{item}}" bindtap="select">{{item}}</view>
+        </view>
+        <view wx:if="{{suggestedTag && !tag}}" class="form-hint">建议标签 {{suggestedTag}}，点击标签确认。</view>
+        <view wx:if="{{formErrors.tag}}" class="error">{{formErrors.tag}}</view>
+      </view>
+    </view>
+    <view class="panel">
+      <view class="heading">商品截图</view>
+      <view class="muted">最多 9 张，单张原图不超过 10 MB。</view>
+      <view wx:for="{{images}}" wx:key="path" class="item row">
+        <image class="thumb" src="{{item.path}}" mode="aspectFill" />
+        <view class="stack">
+          <view wx:if="{{item.status === 'error'}}" class="error">{{item.error}}</view>
+          <text wx:else class="muted">{{item.status === 'ready' ? '已上传' : '正在处理和上传'}}</text>
+          <button wx:if="{{item.status === 'error'}}" class="btn soft inline" data-index="{{index}}" bindtap="retryImage" disabled="{{busyImages || saving}}">重试</button>
+        </view>
+        <button class="btn soft inline" data-index="{{index}}" bindtap="removeImage" disabled="{{busyImages || saving}}">移除</button>
+      </view>
+      <button wx:if="{{images.length < maxImages}}" class="btn soft" disabled="{{busyImages || saving}}" bindtap="chooseImages">添加图片（{{images.length}} / {{maxImages}}）</button>
+      <view wx:if="{{formErrors.images}}" class="error">{{formErrors.images}}</view>
+    </view>
+    <view class="panel">
+      <view class="field">
+        <view class="label">审批时效</view>
+        <view class="options">
+          <view wx:for="{{hours}}" wx:key="*this" role="button" class="option {{item === approvalHours ? 'active' : ''}}" data-field="approvalHours" data-value="{{item}}" bindtap="select">{{item}} 小时</view>
+        </view>
+      </view>
+      <view class="field">
+        <view class="label">审批方式</view>
+        <view class="options">
+          <view role="button" class="option {{mode === 'NORMAL' ? 'active' : ''}}" data-field="mode" data-value="NORMAL" bindtap="select">普通审批</view>
+          <view role="button" class="option {{mode === 'JOINT' ? 'active' : ''}}" data-field="mode" data-value="JOINT" bindtap="select">多人会审</view>
+        </view>
+        <view wx:if="{{mode === 'NORMAL'}}" class="form-hint">提交后可定向邀请好友，首个有效意见决定结果。</view>
+      </view>
+      <block wx:if="{{mode === 'JOINT'}}">
+        <view class="field">
+          <view class="label">会审规则</view>
+          <view class="options">
+            <view role="button" class="option {{reviewRule === 'ALL_APPROVE' ? 'active' : ''}}" data-field="reviewRule" data-value="ALL_APPROVE" bindtap="select">全员通过</view>
+            <view role="button" class="option {{reviewRule === 'ONE_VETO' ? 'active' : ''}}" data-field="reviewRule" data-value="ONE_VETO" bindtap="select">一票否决</view>
+          </view>
+          <view class="form-hint">{{reviewRule === 'ALL_APPROVE' ? '收齐意见后结案，全员同意才通过。' : '任一好友拒绝即结案。'}}</view>
+        </view>
+        <view class="field">
+          <view class="label">会审好友 *</view>
+          <view class="muted">选择 2～3 位，提交后名单锁定。</view>
+          <friend-picker selected="{{approverIds}}" disabled="{{saving}}" bindchange="selectFriends" />
+          <view wx:if="{{formErrors.approverIds}}" class="error">{{formErrors.approverIds}}</view>
+        </view>
+      </block>
+    </view>
+    <view wx:if="{{writeError}}" class="error">{{writeError}}<view wx:if="{{requestId}}" class="muted" selectable>请求编号 {{requestId}}</view></view>
+    <button class="btn" loading="{{saving}}" disabled="{{saving || busyImages}}" bindtap="submit">提交申请</button>
+  </block>
+</view>

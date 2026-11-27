@@ -1,0 +1,97 @@
+<view class="screen">
+  <view wx:if="{{loading && !application}}" class="empty">正在读取最新状态…</view>
+  <view wx:if="{{loadError}}" class="panel stack">
+    <view class="error">{{loadError}}</view>
+    <button class="btn soft" disabled="{{loading}}" bindtap="refresh">重新加载</button>
+  </view>
+  <block wx:if="{{application}}">
+    <view class="hero stack">
+      <view class="row"><text class="muted">{{application.modeLabel}}　{{application.tag}}</text><text class="badge {{application.status}}">{{application.statusLabel}}</text></view>
+      <view class="amount">{{application.priceLabel}}</view>
+      <view class="description">{{application.description}}</view>
+      <view class="muted">申请人 {{application.owner.nickname || '微信用户'}}</view>
+    </view>
+    <view class="panel">
+      <view class="item row"><text>审批截止</text><text class="muted">{{application.deadlineLabel}}</text></view>
+      <view wx:if="{{application.validityLabel}}" class="item row"><text>消费截止</text><text class="muted">{{application.validityLabel}}</text></view>
+      <view wx:if="{{application.status === 'EXPIRED'}}" class="item">{{application.expire_reason === 'CONSUME_TIMEOUT' ? '消费有效期已到，原审批结果为已同意。' : '审批时效已到。'}}</view>
+      <view wx:if="{{application.image_ids.length}}" class="item">
+        <view class="label">商品截图</view>
+        <view wx:if="{{photoError}}" class="error">{{photoError}}</view>
+        <view wx:elif="{{!photos.length}}" class="muted">正在读取图片…</view>
+        <view class="options">
+          <image wx:for="{{photos}}" wx:key="file_id" class="thumb" src="{{item.url}}" lazy-load mode="aspectFill" data-url="{{item.url}}" bindtap="preview" />
+        </view>
+      </view>
+    </view>
+
+    <view class="panel">
+      <view class="heading">{{application.mode === 'JOINT' ? '会审进度' : '审批进度'}}</view>
+      <view wx:if="{{application.review_rule}}" class="form-hint">规则 {{application.review_rule === 'ONE_VETO' ? '一票否决' : '全员通过'}}</view>
+      <view wx:if="{{progress.participants.length}}" class="form-hint">
+        同意 {{progress.approved_count}} 人　拒绝 {{progress.rejected_count}} 人　{{application.status === 'PENDING' ? '待处理' : '未提交'}} {{progress.pending_count}} 人
+      </view>
+      <view wx:else class="empty">暂无已确认的审批人。</view>
+      <view wx:for="{{progress.participants}}" wx:key="userId" class="item">
+        <view class="row"><text>{{item.user.nickname || '微信好友'}}</text><text class="badge">{{item.decisionLabel}}</text></view>
+        <view wx:if="{{item.opinion.comment_visible && item.opinion.comment}}" class="description form-hint">{{item.opinion.comment}}</view>
+        <view wx:elif="{{item.decision === 'REJECT'}}" class="form-hint">拒绝理由当前不可见</view>
+      </view>
+    </view>
+
+    <view wx:if="{{application.permissions.can_approve}}" class="panel stack">
+      <view class="heading">提交意见</view>
+      <button class="btn" loading="{{saving}}" disabled="{{saving || loading}}" bindtap="approve">同意申请</button>
+      <button class="btn danger" disabled="{{saving || loading}}" data-panel="reject" bindtap="openPanel">填写拒绝理由</button>
+      <block wx:if="{{panel === 'reject'}}">
+        <textarea class="input" placeholder="说明你的拒绝理由" maxlength="500" value="{{comment}}" disabled="{{saving}}" bindinput="editComment" />
+        <view class="muted">{{comment.length}} / 500</view>
+        <view wx:if="{{commentError}}" class="error">{{commentError}}</view>
+        <view class="options">
+          <button class="btn soft inline" disabled="{{saving}}" data-source="templates" bindtap="selectSource">选用模板</button>
+          <button class="btn soft inline" disabled="{{saving}}" data-source="favorites" bindtap="selectSource">选用收藏</button>
+        </view>
+        <view wx:if="{{sourcesLoading}}" class="muted">正在加载文案…</view>
+        <view wx:elif="{{sourceError}}" class="muted">{{sourceError}}</view>
+        <view wx:elif="{{source && !sources.length && !sourceCursor}}" class="muted">暂无可用文案。</view>
+        <view wx:for="{{sources}}" wx:key="id" class="item description" role="button" data-content="{{item.content}}" bindtap="applySource">{{item.content}}</view>
+        <button wx:if="{{sourceCursor}}" class="btn soft" bindtap="loadSources" disabled="{{sourcesLoading}}">加载更多文案</button>
+        <button class="btn danger" loading="{{saving}}" disabled="{{saving || loading}}" bindtap="reject">提交拒绝意见</button>
+      </block>
+    </view>
+
+    <view wx:if="{{application.permissions.can_withdraw}}" class="panel stack">
+      <view class="heading">管理申请</view>
+      <view class="options">
+        <button wx:if="{{application.mode === 'NORMAL'}}" class="btn soft inline" disabled="{{saving || loading}}" data-panel="share" bindtap="selectPanel">邀请好友审批</button>
+        <button wx:if="{{application.permissions.can_start_review}}" class="btn soft inline" disabled="{{saving || loading}}" data-panel="review" bindtap="selectPanel">开启多人会审</button>
+        <button wx:if="{{application.mode === 'JOINT'}}" class="btn soft inline" open-type="share" data-kind="review">转发会审入口</button>
+      </view>
+      <block wx:if="{{application.mode === 'NORMAL' && panel === 'share'}}">
+        <friend-picker selected="{{selected}}" max="{{10}}" disabled="{{saving || loading}}" bindchange="selectFriends" />
+        <button class="btn" loading="{{saving}}" disabled="{{saving || loading}}" bindtap="share">生成定向邀请</button>
+        <view wx:if="{{shareCard}}" class="notice">请转发给刚选中的好友。邀请截止 {{shareCard.expiry}}。</view>
+        <button wx:if="{{shareCard}}" class="btn soft" open-type="share">转发审批邀请</button>
+      </block>
+      <block wx:if="{{application.permissions.can_start_review && panel === 'review'}}">
+        <view class="muted">选择 2～3 位好友。会审开启后，名单锁定，原普通审批邀请可能关闭。</view>
+        <friend-picker selected="{{selected}}" disabled="{{saving || loading}}" bindchange="selectFriends" />
+        <view class="options">
+          <view role="button" class="option {{rule === 'ALL_APPROVE' ? 'active' : ''}}" data-rule="ALL_APPROVE" bindtap="selectRule">全员通过</view>
+          <view role="button" class="option {{rule === 'ONE_VETO' ? 'active' : ''}}" data-rule="ONE_VETO" bindtap="selectRule">一票否决</view>
+        </view>
+        <button class="btn" loading="{{saving}}" disabled="{{saving || loading}}" bindtap="startReview">锁定名单并开始会审</button>
+      </block>
+      <button class="btn danger" disabled="{{saving || loading}}" bindtap="withdraw">撤回申请</button>
+    </view>
+
+    <view wx:if="{{application.permissions.can_set_validity}}" class="panel stack">
+      <view class="heading">消费有效期</view>
+      <picker mode="date" value="{{endDate}}" data-field="endDate" disabled="{{saving || loading}}" bindchange="pickValidity"><view class="input">{{endDate || '选择截止日期'}}</view></picker>
+      <picker mode="time" value="{{endTime}}" data-field="endTime" disabled="{{saving || loading}}" bindchange="pickValidity"><view class="input">{{endTime || '选择截止时间'}}</view></picker>
+      <view wx:if="{{validityError}}" class="error">{{validityError}}</view>
+      <button class="btn" loading="{{saving}}" disabled="{{saving || loading}}" bindtap="setValidity">保存消费有效期</button>
+    </view>
+    <view wx:if="{{writeError}}" class="error" aria-live="polite">{{writeError}}<view wx:if="{{requestId}}" class="muted" selectable>请求编号 {{requestId}}</view></view>
+  </block>
+</view>

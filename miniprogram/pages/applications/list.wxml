@@ -1,0 +1,30 @@
+<view class="screen">
+  <view class="options field">
+    <view wx:for="{{tabs}}" wx:key="id" role="button" class="option {{tab === item.id ? 'active' : ''}}" data-tab="{{item.id}}" bindtap="switchTab">{{item.label}}</view>
+  </view>
+  <picker wx:if="{{tab === 'mine'}}" class="field" range="{{filters}}" range-key="label" value="{{filterIndex}}" bindchange="setFilter"><view class="input">{{filters[filterIndex].label}}　▾</view></picker>
+  <view class="panel">
+    <block wx:if="{{tab === 'invitations'}}">
+      <view wx:for="{{items}}" wx:key="invitation_id" class="item stack">
+        <view class="row"><text>{{item.inviter.nickname || '微信好友'}}</text><text class="badge">{{item.statusLabel}}</text></view>
+        <view class="muted">邀请截止 {{item.expiry}}</view>
+        <button wx:if="{{item.status === 'PENDING'}}" class="btn soft" disabled="{{saving}}" data-id="{{item.invitation_id}}" bindtap="accept">接受邀请</button>
+        <button wx:elif="{{item.status === 'ACCEPTED'}}" class="btn soft" data-id="{{item.application_id}}" bindtap="openApplication">查看申请</button>
+      </view>
+    </block>
+    <block wx:else>
+      <view wx:for="{{items}}" wx:key="application_id" class="item stack" role="button" data-id="{{item.application_id}}" bindtap="openApplication">
+        <view class="row"><text>{{item.priceLabel}}　{{item.tag}}</text><text class="badge {{item.status}}">{{item.statusLabel}}</text></view>
+        <view class="description excerpt">{{item.description}}</view>
+        <view class="muted">{{item.modeLabel}}　{{item.myDecision ? '我的意见 ' + item.myDecision : '审批截止 ' + item.deadlineLabel}}</view>
+      </view>
+    </block>
+    <view wx:if="{{loading}}" class="empty">正在加载…</view>
+    <view wx:elif="{{!items.length && !error}}" class="empty">{{cursor ? '本页暂无匹配记录。' : '暂无记录。'}}</view>
+    <view wx:if="{{error}}" class="error">{{error}}</view>
+    <button wx:if="{{error}}" class="btn soft" bindtap="retry">重试</button>
+    <button wx:elif="{{cursor && !loading}}" class="btn soft" bindtap="more">加载更多</button>
+    <view wx:if="{{writeError}}" class="error">{{writeError}}<view wx:if="{{requestId}}" class="muted" selectable>请求编号 {{requestId}}</view></view>
+  </view>
+  <navigator wx:if="{{tab === 'mine'}}" url="/pages/applications/create" hover-class="none"><button class="btn">发起申请</button></navigator>
+</view>

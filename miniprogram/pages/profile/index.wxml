@@ -1,0 +1,23 @@
+<view class="screen">
+  <view wx:if="{{loading}}" class="empty">正在加载资料…</view>
+  <view wx:if="{{loadError}}" class="panel stack">
+    <view class="error">{{loadError}}</view>
+    <button class="btn soft" bindtap="load">重新登录</button>
+  </view>
+  <view wx:if="{{ready}}" class="panel stack">
+    <view class="heading">个人资料</view>
+    <view class="row">
+      <image wx:if="{{avatarPath || avatarUrl}}" class="thumb" src="{{avatarPath || avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="muted">头像</view>
+      <button class="btn soft inline" open-type="chooseAvatar" disabled="{{loading || uploading || saving}}" bindchooseavatar="chooseAvatar">选择头像</button>
+    </view>
+    <button wx:if="{{avatarPath}}" class="btn soft" bindtap="removeAvatarSelection" disabled="{{uploading || saving}}">取消更换头像</button>
+    <view class="field">
+      <label class="label" for="nickname">昵称</label>
+      <input id="nickname" class="input" type="nickname" maxlength="64" placeholder="输入昵称" value="{{nickname}}" disabled="{{loading || uploading || saving}}" bindinput="changeNickname" />
+    </view>
+    <view wx:if="{{success}}" class="notice">{{success}}</view>
+    <view wx:if="{{writeError}}" class="error">{{writeError}}<view wx:if="{{requestId}}" class="muted" selectable>请求编号 {{requestId}}</view></view>
+    <button class="btn" loading="{{saving || uploading}}" disabled="{{loading || saving || uploading}}" bindtap="save">保存资料</button>
+  </view>
+</view>

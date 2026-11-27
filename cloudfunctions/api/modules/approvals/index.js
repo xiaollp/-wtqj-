@@ -42,6 +42,24 @@ exports.register = (register, s) => {
     await s.requireApplicationAccess(ctx.user_id, p.application_id, 'VIEW'); await s.expire(p.application_id);
     return s.progress(await s.requireApplicationAccess(ctx.user_id, p.application_id, 'VIEW'), ctx.user_id);
   });
+  register('approvals.todos', P, async (p, ctx) => {
+    if (ctx.account_status !== 'NORMAL') return { items: [], next_cursor: null };
+    return s.page('applications', { participant_ids: { $contains: ctx.user_id }, status: 'PENDING' }, p, ctx.user_id, async record => {
+      if (s.now() >= record.approval_deadline) {
+        await s.expire(record._id);
+        return null;
+      }
+      const participant = await s.store.get('approval_participants', participantId(record._id, ctx.user_id));
+      if (!participant || participant.qualification_status !== 'ACTIVE' || participant.decision !== 'PENDING') return null;
+      try {
+        const application = await s.requireApplicationAccess(ctx.user_id, record._id, 'VIEW');
+        return application.status === 'PENDING' && s.now() < application.approval_deadline ? s.summary(application) : null;
+      } catch (error) {
+        if (error.code === 'ACCESS_DENIED') return null;
+        throw error;
+      }
+    });
+  });
   register('approvals.history', { ...P, from_to: f.array(f.int(0), 2, 2, { optional: true }) }, async (p, ctx) => {
     if (p.from_to) need(p.from_to[0] <= p.from_to[1], 'VALIDATION_FAILED', '开始时间不能晚于结束时间');
     return s.page('opinions', { approver_id: ctx.user_id, ...(p.from_to ? { created_at: { $gte: p.from_to[0], $lte: p.from_to[1] } } : {}) }, p, ctx.user_id,

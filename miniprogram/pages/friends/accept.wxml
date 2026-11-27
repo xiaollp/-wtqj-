@@ -1,0 +1,12 @@
+<view class="screen">
+  <view class="panel stack">
+    <view class="heading">好友邀请</view>
+    <view wx:if="{{invitation}}">{{invitation.inviter.nickname || '邀请人'}} 收到你的领取请求，确认后你们会成为好友。</view>
+    <view wx:elif="{{available}}" class="muted">领取邀请后，发起人需要确认你的身份。</view>
+    <view wx:else class="error">邀请链接不完整，请联系好友重新发送。</view>
+    <button wx:if="{{available && !invitation}}" class="btn" loading="{{saving}}" disabled="{{saving}}" bindtap="claim">领取好友邀请</button>
+    <view wx:if="{{writeError}}" class="error">{{writeError}}<view wx:if="{{requestId}}" class="muted" selectable>请求编号 {{requestId}}</view></view>
+    <navigator wx:if="{{invitation}}" url="/pages/friends/index" hover-class="none"><button class="btn soft">查看好友</button></navigator>
+  </view>
+  <navigator class="item" open-type="reLaunch" url="/pages/index/index">返回首页 ›</navigator>
+</view>

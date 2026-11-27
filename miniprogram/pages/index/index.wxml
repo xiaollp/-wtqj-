@@ -1,29 +1,21 @@
-<!--index.wxml-->
-<view class="container">
-  <view class="title">快速了解云开发</view>
-  <view class="top_tip">免鉴权接口调用 免部署后台 高并发</view>
-  <view class="power" wx:key="title" wx:for="{{powerList}}" wx:for-item="power">
-    <view class="power_info" data-index="{{index}}" data-type="{{ power.type }}" bindtap="onClickPowerInfo">
-      <view class="power_info_text">
-        <view class="power_info_text_title">
-          {{power.title}}
-          <view class="power_info_text_tag" wx:if="{{power.tag}}">{{power.tag}}</view>
-        </view>
-        <view class="power_info_text_tip">{{power.tip}}</view>
-      </view>
-      <image wx:if="{{!power.showItem && power.item.length}}" class="power_info_more" src="../../images/arrow.svg"></image>
-      <image wx:if="{{power.showItem && power.item.length}}" class="power_info_less" src="../../images/arrow.svg"></image>
-      <image wx:if="{{!power.item.length}}" class="power_item_icon" src="../../images/arrow.svg"></image>
-    </view>
-    <view wx:if="{{power.showItem}}">
-      <view wx:key="title" wx:for="{{power.item}}">
-        <view class="line"></view>
-        <view class="power_item" bindtap="jumpPage" data-type="{{ item.type }}" data-page="{{item.page}}">
-          <view class="power_item_title">{{item.title}}</view>
-          <image class="power_item_icon" src="../../images/arrow.svg"></image>
-        </view>
-      </view>
-    </view>
+<view class="screen">
+  <view class="hero stack">
+    <view class="title">消费审批</view>
+    <view class="muted" wx:if="{{user}}">{{user.nickname || '微信用户'}}，把想买的东西发给好友，听听他们的意见。</view>
+    <view class="muted" wx:elif="{{loading}}">正在登录微信账号…</view>
+    <view wx:else class="muted">{{error}}</view>
+    <navigator wx:if="{{user}}" url="/pages/applications/create" hover-class="none"><button class="btn light">发起申请</button></navigator>
+    <button wx:elif="{{error}}" class="btn light" bindtap="loadUser">重新登录</button>
   </view>
-  <cloud-tip-modal showTipProps="{{showTip}}" title="{{title}}" content="{{content}}"></cloud-tip-modal>
+  <view wx:if="{{user}}" class="panel">
+    <view class="heading">申请与审批</view>
+    <navigator class="item row" url="/pages/applications/list?tab=mine"><text>我的申请</text><text aria-hidden="true">›</text></navigator>
+    <navigator class="item row" url="/pages/applications/list?tab=todo"><text>待我审批</text><text aria-hidden="true">›</text></navigator>
+    <navigator class="item row" url="/pages/applications/list?tab=invitations"><text>收到的审批邀请</text><text aria-hidden="true">›</text></navigator>
+    <navigator class="item row" url="/pages/applications/list?tab=history"><text>审批历史</text><text aria-hidden="true">›</text></navigator>
+  </view>
+  <view wx:if="{{user}}" class="panel">
+    <navigator class="item row" url="/pages/friends/index"><text>好友和好友邀请</text><text aria-hidden="true">›</text></navigator>
+    <navigator class="item row" url="/pages/profile/index"><text>我的资料</text><text aria-hidden="true">›</text></navigator>
+  </view>
 </view>

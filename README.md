@@ -1,5 +1,7 @@
 # 消费审批微信小程序 C 后端
 
+成员 A 的小程序页面、服务签名、路由和联调入口见 [成员 A 交接](docs/A-HANDOFF.md)。
+
 在原始示例工程上新增31个后端action：登录资料、好友、申请、审批资格、普通审批、多人会审、小组及文件预览入口。使用 JavaScript / CommonJS，要求 Node.js 18或以上。A/B负责的前端示例保留，未代为实现业务页面。
 
 **当前状态：核心业务代码已实现并通过本地测试，未部署到真实微信云环境。** 已对照安装的wx-server-sdk检查接口形态；真实云事务、权限和索引仍需团队开发环境联调。
@@ -37,7 +39,7 @@ node scripts/demo.js
 ## 部署到团队开发环境
 
 1. 用微信开发者工具打开本目录，保留团队真实AppID。原模板AppID随原文件保留，不表示你拥有它。
-2. A在miniprogram/app.js配置团队开发云环境ID。
+2. 在 `miniprogram/config.js` 配置团队开发云环境 ID。
 3. D按database清单创建集合、设置业务集合客户端read/write均为false、配置索引。
 4. api服务端环境变量配置APP_SECRET，至少32个随机字符，所有实例相同且长期稳定；不要把密钥写进小程序或使用.env.example占位文字。
 5. 在api目录安装SDK后上传云函数api，选择实际支持Node.js 18+的运行时。可使用开发者工具安装依赖；按锁文件复现时运行 `pnpm install --frozen-lockfile --ignore-scripts`。
