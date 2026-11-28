@@ -1,0 +1,2 @@
+@import "../../shared/b-theme.wxss";
+.heading{overflow-wrap:anywhere}.panel{overflow-wrap:anywhere}

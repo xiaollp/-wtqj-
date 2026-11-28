@@ -1,0 +1,2 @@
+@import "../../shared/b-theme.wxss";
+.options{margin-bottom:24rpx}.template-content{font-size:32rpx;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}.demo-link{display:block}.title{font-size:44rpx}.notice{overflow-wrap:anywhere}.actions{justify-content:flex-end;flex-wrap:wrap}.actions .option{margin:0}.block-action{color:#8a281e}.received-content{font-size:32rpx;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}.heading{margin-bottom:0}

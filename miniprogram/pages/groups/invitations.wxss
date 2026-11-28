@@ -1,0 +1,2 @@
+@import "../../shared/b-theme.wxss";
+.invitation-item{display:block;margin-top:20rpx}.options{margin-bottom:24rpx}.heading{overflow-wrap:anywhere}.amount{white-space:nowrap}

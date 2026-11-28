@@ -1,0 +1,6 @@
+<view class="screen"><view wx:if="{{mock}}" class="notice">模拟模式 · 生成一条发给当前演示账号的邀请，即可测试接受流程</view>
+ <button wx:if="{{mock}}" class="btn soft" bindtap="demoInvite">生成演示邀请并打开</button><view class="options"><button class="option {{direction === 'RECEIVED' ? 'active' : ''}}" data-direction="RECEIVED" bindtap="switchTab">我收到的</button><button class="option {{direction === 'SENT' ? 'active' : ''}}" data-direction="SENT" bindtap="switchTab">我发出的</button></view>
+ <view wx:if="{{error}}" class="panel stack"><view class="error">{{error}}</view><button class="btn soft" bindtap="retry">重试</button></view>
+ <navigator wx:for="{{items}}" wx:key="invitation_id" url="{{item.route}}" class="panel invitation-item"><view class="row"><view class="heading">{{direction === 'SENT' ? (item.invitee.nickname || '微信用户') : (item.inviter.nickname || '微信用户')}}</view><text class="badge">{{item.statusLabel}}</text></view><view class="muted">{{direction === 'SENT' ? '查看发出的邀请' : '邀请你加入消费监督小组'}}</view></navigator>
+ <view wx:if="{{loading}}" class="empty">正在加载邀请…</view><view wx:if="{{!loading && !error && !items.length}}" class="panel empty">暂无邀请记录</view><button wx:if="{{cursor}}" class="btn soft" bindtap="more" disabled="{{loading}}">加载更多</button>
+</view>

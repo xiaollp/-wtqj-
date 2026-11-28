@@ -1,0 +1,5 @@
+@import "../../shared/b-theme.wxss";
+.title{font-size:44rpx}.entry{display:block}.card-image{width:100%;border-radius:18rpx}.render-canvas{position:fixed;left:-2000px;top:0;pointer-events:none}.panel{overflow-wrap:anywhere}
+.screen .receipt-status.APPROVED { color:#078544; background:#e9f6ed; }
+.screen .receipt-status.REJECTED { color:#c23b32; background:#fff0ed; }
+.screen .receipt-status.EXPIRED { color:#70757a; background:#edf0f2; }

@@ -1,0 +1,23 @@
+<view class="screen">
+  <view wx:if="{{mock}}" class="notice">模拟模式 · 榜单和收藏仅用于本机交互演示</view>
+  <view class="list-header"><view><view class="title">锐评与收藏</view><view class="muted list-subtitle">留住那些有帮助的表达</view></view></view>
+  <view class="segmented">
+    <button class="segment {{tab === 'ranking' ? 'selected' : ''}}" data-tab="ranking" bindtap="switchTab" disabled="{{saving}}">匿名榜单</button>
+    <button class="segment {{tab === 'favorites' ? 'selected' : ''}}" data-tab="favorites" bindtap="switchTab" disabled="{{saving}}">我的收藏</button>
+  </view>
+  <navigator wx:if="{{mock}}" class="demo-inline" url="/pages/comments/report?opinion_id=received-demo&target_user_id=received-author"><text>收到锐评后的处理流程</text><text>查看演示 ›</text></navigator>
+  <view class="section-caption"><text>{{tab === 'favorites' ? '个人收藏' : '公开匿名锐评'}}</text><text>已展示 {{items.length}} 条</text></view>
+  <view wx:if="{{error}}" class="panel stack"><view class="error">{{error}}</view><button class="btn soft" bindtap="retry">重试</button></view>
+  <view wx:if="{{writeError}}" class="error">{{writeError}}</view>
+  <view wx:for="{{items}}" wx:key="opinion_id" class="panel quote-card">
+    <view class="quote-meta"><text class="quote-category">{{item.available ? (tab === 'favorites' ? '收藏文案' : '匿名锐评') : '内容不可用'}}</text><text wx:if="{{item.favorite}}" class="quote-source">已收藏</text></view>
+    <view class="quote-body {{!item.available ? 'unavailable' : ''}}">{{item.available ? item.content : '该内容已隐藏，仍可取消收藏。'}}</view>
+    <view class="card-actions">
+      <button wx:if="{{item.available}}" class="card-action" bindtap="copy" data-id="{{item.opinion_id}}" disabled="{{saving || loading}}">复制文案</button>
+      <button class="card-action quiet" bindtap="toggle" data-id="{{item.opinion_id}}" disabled="{{saving || loading}}">{{item.favorite ? '取消收藏' : '收藏'}}</button>
+    </view>
+  </view>
+  <view wx:if="{{loading}}" class="empty">正在加载…</view>
+  <view wx:if="{{!loading && !error && !items.length}}" class="panel empty">{{tab === 'favorites' ? '还没有收藏，去榜单看看吧。' : '暂时没有公开锐评。'}}</view>
+  <button wx:if="{{cursor}}" class="btn soft" bindtap="more" disabled="{{loading}}">加载更多</button>
+</view>

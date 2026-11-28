@@ -1,0 +1,25 @@
+@import "../../shared/b-theme.wxss";
+.receipt-screen{background:#eceee8;min-height:100vh;box-sizing:border-box}
+.receipt{background:#fffef8;padding:44rpx 32rpx 46rpx;margin:8rpx 8rpx 32rpx;position:relative;box-shadow:0 10rpx 28rpx rgba(49,55,40,.05);color:#30372c}
+.receipt::after{content:"";position:absolute;left:0;right:0;bottom:-8rpx;height:16rpx;background:radial-gradient(circle at 12rpx 16rpx,#eceee8 8rpx,transparent 9rpx) repeat-x;background-size:24rpx 16rpx}
+.receipt-head{text-align:center;padding-bottom:30rpx;border-bottom:2rpx dashed #d7dacd}.receipt-title{font-size:40rpx;font-weight:650;letter-spacing:6rpx}.receipt-subtitle{font-size:24rpx;color:#818777;margin-top:14rpx}.receipt-number{font-family:monospace;font-size:23rpx;color:#8b8f83;margin-top:24rpx;letter-spacing:2rpx}
+.receipt-product{padding:34rpx 0}.receipt-label{font-size:24rpx;color:#818777}.receipt-product-name{font-size:34rpx;font-weight:550;line-height:1.7;margin-top:12rpx;overflow-wrap:anywhere}.receipt-price{font-family:monospace;font-size:60rpx;margin:14rpx 0}.receipt-result{display:inline-block;color:#078544;border:2rpx solid #99c9a5;font-size:26rpx;padding:7rpx 18rpx;transform:rotate(-3deg)}
+.receipt-section{border-top:2rpx dashed #d7dacd;padding:26rpx 0}.receipt-row{display:flex;align-items:center;justify-content:space-between;gap:20rpx}.print-control{font-size:23rpx;background:transparent;color:#078544;margin:0;padding:8rpx 0;line-height:1.5}.print-control::after{border:0}.print-area{margin-top:20rpx;min-height:48rpx}.printed-line{display:flex;gap:16rpx;margin-bottom:22rpx;animation:paper-appear .2s ease-out}.comment-number{font-family:monospace;color:#9a9f90;font-size:24rpx;flex:none;padding-top:5rpx}.printed-text{font-size:29rpx;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;min-width:0}.print-status{color:#8a917e;font-size:22rpx;line-height:1.7}.print-dot{display:inline-block;width:9rpx;height:9rpx;background:#078544;margin-right:12rpx;animation:print-pulse .8s steps(2,end) infinite}.advice{font-size:27rpx;line-height:1.9;margin-top:16rpx;white-space:pre-wrap}.receipt-footer{text-align:center;border-top:2rpx dashed #d7dacd;padding-top:32rpx;color:#818777;font-size:24rpx}.receipt-bars{width:240rpx;height:46rpx;margin:0 auto 20rpx;background:repeating-linear-gradient(90deg,#414b39 0,#414b39 3rpx,transparent 3rpx,transparent 7rpx,#414b39 7rpx,#414b39 9rpx,transparent 9rpx,transparent 14rpx)}.receipt-disclaimer{font-size:20rpx;margin-top:12rpx}.receipt-tools{margin:0 8rpx}.card-image{width:100%;border-radius:4rpx}.render-canvas{position:fixed;left:-2000px;top:0;pointer-events:none}
+@keyframes paper-appear{from{opacity:.3;transform:translateY(-5rpx)}to{opacity:1;transform:translateY(0)}}
+@keyframes print-pulse{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.printed-line,.print-dot{animation:none}}
+
+.receipt-result.APPROVED { color:#078544; border-color:#99c9a5; background:#edf7ef; }
+.receipt-result.REJECTED { color:#c23b32; border-color:#e4aaa3; background:#fff0ed; }
+.receipt-result.EXPIRED { color:#70757a; border-color:#bdc2c5; background:#edf0f2; }
+
+/* 出票口固定在纸张上沿，纸张按实测高度逐渐展开。 */
+.ticket-machine{position:relative;z-index:2;margin:12rpx 0 0;border-radius:24rpx 24rpx 12rpx 12rpx;background:#d9ded5;padding:28rpx 24rpx 20rpx;box-shadow:0 5rpx 0 #bdc6b9,0 12rpx 26rpx rgba(45,56,35,.08)}
+.machine-face{display:flex;justify-content:space-between;align-items:center;gap:20rpx;padding:0 10rpx 24rpx}.machine-name{font-size:27rpx;font-weight:600;color:#46523f;letter-spacing:2rpx}.machine-caption{font-size:22rpx;color:#7b8673;margin-top:8rpx}.machine-light{width:12rpx;height:12rpx;background:#74a87a;border-radius:50%;flex:none}.machine-light.working{animation:machine-blink .7s ease-in-out infinite}
+.machine-slot{height:16rpx;background:#394333;border-radius:12rpx;box-shadow:inset 0 5rpx 7rpx rgba(0,0,0,.4);position:relative}.machine-slot::after{content:"";position:absolute;left:16rpx;right:16rpx;top:10rpx;height:6rpx;background:rgba(0,0,0,.18);border-radius:8rpx}
+.paper-feed{overflow:hidden;transition:height 2.2s linear;position:relative;z-index:1;padding:0 12rpx;margin-top:-5rpx;box-sizing:border-box}.paper-feed.feed-complete{height:auto!important;overflow:visible}.paper-feed .receipt{margin:0 8rpx 14rpx;padding-top:42rpx}.machine-controls{min-height:62rpx;display:flex;justify-content:center;align-items:center;margin:12rpx 0 24rpx}
+.printed-copy{position:relative;flex:1;min-width:0}.printed-ghost,.printed-copy .printed-text{font-size:29rpx;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;display:block}.printed-ghost{visibility:hidden}.printed-copy .printed-text{position:absolute;left:0;right:0;top:0}.printed-line{animation:none}
+@keyframes machine-blink{50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.paper-feed{transition:none}.machine-light.working{animation:none}}
+
+.comment-full{display:block;flex:1;min-width:0;font-size:29rpx;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}

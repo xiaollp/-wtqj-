@@ -1,0 +1,28 @@
+<view class="screen">
+  <view wx:if="{{mock}}" class="notice">模拟模式 · 模板仅存本机，未接入真实内容审核</view>
+  <view class="list-header">
+    <view><view class="title">锐评模板</view><view class="muted list-subtitle">选一句合适的建议</view></view>
+    <navigator url="/pages/comments/template-edit"><button class="new-template" disabled="{{saving}}">＋ 新建</button></navigator>
+  </view>
+  <view class="segmented">
+    <button class="segment {{scope === 'ALL' ? 'selected' : ''}}" data-scope="ALL" bindtap="changeScope" disabled="{{saving}}">全部模板</button>
+    <button class="segment {{scope === 'MINE' ? 'selected' : ''}}" data-scope="MINE" bindtap="changeScope" disabled="{{saving}}">我的模板</button>
+  </view>
+  <picker mode="selector" range="{{categoryOptions}}" value="{{categoryIndex}}" bindchange="changeCategory" disabled="{{saving}}">
+    <view class="filter-select"><view class="filter-name">分类筛选</view><view class="filter-value"><text>{{category || '全部'}}</text><text class="filter-chevron">⌄</text></view></view>
+  </picker>
+  <view class="section-caption"><text>{{category || '所有分类'}} · {{scope === 'MINE' ? '个人模板' : '系统与个人模板'}}</text><text>{{items.length}} 条</text></view>
+  <view wx:if="{{error}}" class="panel stack"><view class="error">{{error}}</view><button class="btn soft" bindtap="load" disabled="{{loading}}">重试</button></view>
+  <view wx:if="{{writeError}}" class="error">{{writeError}}</view>
+  <view wx:for="{{items}}" wx:key="template_id" class="panel quote-card">
+    <view class="quote-meta"><text class="quote-category">{{item.category}}</text><text class="quote-source">{{item.is_custom ? '个人模板' : '系统预设'}}</text></view>
+    <view class="quote-body">{{item.content}}</view>
+    <view class="card-actions">
+      <button class="card-action" data-id="{{item.template_id}}" bindtap="use" disabled="{{saving}}">{{pick ? '选用这句' : '复制文案'}}</button>
+      <button wx:if="{{item.is_custom}}" class="card-action quiet" data-id="{{item.template_id}}" bindtap="edit" disabled="{{saving}}">编辑</button>
+      <button wx:if="{{item.is_custom}}" class="card-action delete" data-id="{{item.template_id}}" bindtap="remove" disabled="{{saving}}">删除</button>
+    </view>
+  </view>
+  <view wx:if="{{loading}}" class="empty">正在加载模板…</view>
+  <view wx:if="{{!loading && !error && !items.length}}" class="panel empty">暂无符合条件的模板，试试其他分类或新建一条。</view>
+</view>

@@ -1,0 +1,5 @@
+<view class="screen"><view wx:if="{{mock}}" class="notice">模拟模式 · 待办为演示数据，不会提交真实审批</view><view class="heading">小组待办</view>
+ <view wx:if="{{error}}" class="panel stack"><view class="error">{{error}}</view><button class="btn soft" bindtap="retry">重试</button></view>
+ <view wx:for="{{items}}" wx:key="applicationId" class="panel stack"><view class="row"><view class="heading">{{item.application.description}}</view><text class="badge">{{item.can_approve ? '待我审批' : '已提交意见'}}</text></view><view class="amount">¥ {{item.amount}}</view><view class="muted">{{item.application.tag}} · 全员同意后通过</view><button class="btn soft" data-id="{{item.application.application_id}}" bindtap="open">查看申请</button></view>
+ <view wx:if="{{loading}}" class="empty">正在加载待办…</view><view wx:if="{{!loading && !error && !items.length}}" class="panel empty">暂无待办。只有你具备审批资格且尚未结束的申请才会显示。</view><button wx:if="{{cursor}}" class="btn soft" bindtap="more" disabled="{{loading}}">加载更多</button>
+</view>

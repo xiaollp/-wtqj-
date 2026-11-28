@@ -1,0 +1,56 @@
+/* 依据同学的代码模板统一B页面，局部导入，不改动A的全局样式。 */
+page {
+  --ink: #202124;
+  --muted: #73777b;
+  --accent: #07a854;
+  --line: #ededed;
+  background: #f6f6f6;
+  color: #202124;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.screen { padding: 32rpx 28rpx calc(48rpx + env(safe-area-inset-bottom)); }
+.screen .hero {
+  padding: 12rpx 4rpx 28rpx;
+  margin-bottom: 12rpx;
+  color: #202124;
+  background: transparent;
+  border-radius: 0;
+}
+.screen .title { font-size: 42rpx; line-height: 1.4; font-weight: 600; letter-spacing: 0; }
+.screen .heading { font-size: 32rpx; line-height: 1.45; font-weight: 600; }
+.screen .muted, .screen .hero .muted { color: #73777b; font-size: 25rpx; line-height: 1.7; }
+.screen .panel { padding: 28rpx; margin-bottom: 24rpx; background: #fff; border: none; border-radius: 16rpx; box-shadow: none; }
+.screen .stack { gap: 20rpx; }
+.screen .item { border-color: #ededed; padding: 24rpx 0; }
+.screen .input { background: #f7f7f7; border: 1rpx solid #ededed; border-radius: 10rpx; padding: 20rpx; font-size: 28rpx; }
+.screen textarea.input { height: 240rpx; line-height: 1.7; }
+.screen .label { font-size: 28rpx; font-weight: 500; }
+.screen .form-hint { color: #888; font-size: 23rpx; }
+.screen .btn { background: #07a854; color: #fff; font-size: 28rpx; font-weight: 500; border-radius: 10rpx; min-height: 84rpx; padding: 23rpx 24rpx; }
+.screen .btn.light { background: #07a854; color: #fff; }
+.screen .btn.soft { background: #f1f6f2; color: #078544; }
+.screen .btn.danger { background: #fff1ef; color: #c34336; }
+.screen .btn[disabled] { background: #e7eae8; color: #969b98; opacity: 1; }
+.screen .options { gap: 12rpx; margin-bottom: 24rpx; }
+.screen .option { margin: 0; min-height: 64rpx; box-sizing: border-box; padding: 12rpx 20rpx; font-size: 25rpx; line-height: 1.5; border: 1rpx solid #e6e6e6; border-radius: 10rpx; background: #fff; color: #555; }
+.screen .option.active { background: #e9f6ed; color: #078544; border-color: #b3dfc1; font-weight: 500; }
+.screen .notice { background: #ecefed; color: #69716c; font-size: 23rpx; line-height: 1.75; padding: 18rpx 22rpx; border-radius: 10rpx; margin: 0 0 24rpx; }
+.screen .error { background: #fff0ee; color: #b83d30; font-size: 25rpx; line-height: 1.65; padding: 20rpx; border-radius: 10rpx; }
+.screen .empty { color: #888; padding: 48rpx 20rpx; font-size: 26rpx; line-height: 1.8; }
+.screen .badge { font-size: 23rpx; background: #f2f3f2; color: #68716b; border-radius: 6rpx; padding: 6rpx 12rpx; }
+.screen .amount { font-size: 42rpx; font-weight: 600; color: #202124; }
+.screen .group-name { font-size: 32rpx; font-weight: 500; }
+.screen .member-initial { background: #e9f6ed; color: #078544; border-radius: 50%; }
+.screen .template-content { font-size: 30rpx; line-height: 1.9; }
+.screen .track { background: #edf0ed; }
+.screen .fill { background: #07a854; }
+.screen .rate { color: #078544; font-weight: 600; }
+.screen .total { font-weight: 600; }
+.screen .delete, .screen .block-action { color: #bd4c40; }
+.screen .row { gap: 16rpx; }
+
+/* 收起时只展示当前选项，点击使用微信原生选择器。 */
+.screen .filter-select { display:flex; align-items:center; justify-content:space-between; gap:24rpx; min-height:90rpx; box-sizing:border-box; padding:22rpx 26rpx; background:#fff; border:1rpx solid #e7ebe7; border-radius:12rpx; margin-bottom:24rpx; }
+.screen .filter-name { font-size:27rpx; color:#59625b; }
+.screen .filter-value { display:flex; align-items:center; gap:18rpx; font-size:27rpx; color:#078544; }
+.screen .filter-chevron { font-size:30rpx; color:#89958c; }

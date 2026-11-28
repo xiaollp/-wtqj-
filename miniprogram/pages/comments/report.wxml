@@ -1,0 +1,24 @@
+<view class="screen">
+ <view wx:if="{{mock}}" class="notice">模拟模式 · 举报和拉黑只更新本机，不会通知管理员</view>
+ <view wx:if="{{!valid}}" class="error">缺少目标锐评标识，请从锐评列表重新进入。</view>
+ <view wx:if="{{valid}}" class="panel stack">
+  <view class="row"><view class="heading">{{mock ? '小林（演示发布者）' : '锐评发布者'}}</view><text wx:if="{{blockResult === true}}" class="badge">已拉黑</text></view>
+  <view wx:if="{{mock && blockResult !== true}}" class="received-content">先把现有的用好，再考虑添置新的。</view>
+  <view wx:elif="{{blockResult === true}}" class="muted">已隐藏这位发布者的锐评正文，审批决定保留。</view>
+  <view wx:else class="muted">操作对象为进入此页时所选的锐评，权限由后台核验。</view>
+  <view class="row actions">
+   <button class="option" bindtap="showReport" disabled="{{saving || report}}">{{report ? '已举报' : '举报这条锐评'}}</button>
+   <button wx:if="{{targetAvailable}}" class="option block-action" bindtap="block" disabled="{{saving}}">{{blockResult === true ? '解除拉黑' : '拉黑发布者'}}</button>
+  </view>
+  <view wx:if="{{blockResult !== null}}" class="muted">{{blockResult ? '仅对你隐藏该发布者的锐评。' : '已解除拉黑，内容按当前权限展示。'}}</view>
+ </view>
+ <view wx:if="{{valid && (reportOpen || report)}}" class="panel stack">
+  <view class="heading">举报理由</view>
+  <view class="muted">请说明具体问题，管理员会复核后决定是否下架。</view>
+  <textarea wx:if="{{!report}}" class="input" value="{{reason}}" bindinput="input" maxlength="500" placeholder="请描述举报原因" disabled="{{saving}}"/>
+  <view wx:if="{{!report}}" class="form-hint">{{reason.length}} / 500</view>
+  <button wx:if="{{!report}}" class="btn" bindtap="submit" disabled="{{saving}}" loading="{{saving}}">提交举报</button>
+  <view wx:else class="notice">举报已受理，等待复核。编号 {{report.report_id}}</view>
+ </view>
+ <view wx:if="{{writeError}}" class="error">{{writeError}}</view>
+</view>

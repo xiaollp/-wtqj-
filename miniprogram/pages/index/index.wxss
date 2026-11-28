@@ -1,1 +1,2 @@
+@import "../../shared/b-theme.wxss";
 .hero .muted { max-width: 24em; }

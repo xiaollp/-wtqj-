@@ -1,0 +1,14 @@
+<view class="screen">
+ <view wx:if="{{mock}}" class="notice">模拟模式 · 好友为演示账号，邀请不会发送给真人</view>
+ <view class="panel stack"><view class="heading">邀请已确认好友</view><view class="muted">对方接受后加入小组，邀请有效期为24小时。</view>
+ <view wx:if="{{error}}" class="error">{{error}}</view><button wx:if="{{error}}" class="btn soft" bindtap="retry">重试</button>
+ <button wx:for="{{items}}" wx:key="user_id" class="option {{selected === item.user_id ? 'active' : ''}}" data-id="{{item.user_id}}" bindtap="select" disabled="{{saving}}">{{item.nickname || '微信用户'}} {{selected === item.user_id ? '✓' : ''}}</button>
+ <view wx:if="{{loading}}" class="empty">正在加载好友…</view><view wx:if="{{!loading && !error && !items.length}}" class="empty">暂无已确认好友，请先在好友管理中建立关系。</view>
+ <button wx:if="{{cursor}}" class="btn soft" bindtap="more" disabled="{{loading}}">更多好友</button>
+ <view wx:if="{{writeError}}" class="error">{{writeError}}</view>
+ <button wx:if="{{!result}}" class="btn" bindtap="submit" loading="{{saving}}" disabled="{{saving || !selected || error}}">生成邀请</button>
+ <view wx:if="{{result}}" class="notice">{{result.joined ? '对方已经是小组成员' : '邀请已生成，等待指定好友接受'}}</view>
+ <button wx:if="{{result && !result.joined && !mock}}" class="btn" open-type="share">转发给指定好友</button>
+ <view wx:if="{{result && mock && !result.joined}}" class="muted">可在邀请记录中查看。本机模式不模拟对方已经接受。</view>
+ </view>
+</view>

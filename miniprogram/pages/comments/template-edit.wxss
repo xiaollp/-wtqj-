@@ -1,0 +1,2 @@
+@import "../../shared/b-theme.wxss";
+.options{margin-bottom:20rpx}.template-content{font-size:32rpx;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}.delete{color:#8a281e}.row .option{margin:0}.title{font-size:44rpx}

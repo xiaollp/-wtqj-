@@ -1,0 +1,2 @@
+@import "../../shared/b-theme.wxss";
+.title{font-size:44rpx}.total{font-size:72rpx;font-weight:700;line-height:1.2}.rates{display:flex;gap:48rpx;flex-wrap:wrap}.rate{font-size:36rpx;font-weight:650;margin-top:8rpx}.options{margin-bottom:24rpx}.track{height:14rpx;background:#e1eef0;border-radius:8rpx;overflow:hidden}.fill{height:100%;background:#00656e;border-radius:8rpx}.item .stack{gap:12rpx}.panel{overflow-wrap:anywhere}

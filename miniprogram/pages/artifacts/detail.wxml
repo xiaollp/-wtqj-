@@ -1,0 +1,28 @@
+<view class="screen receipt-screen">
+ <view wx:if="{{mock}}" class="notice">模拟模式 · 内容为示例，保存时会实际绘制小票图片</view>
+ <view wx:if="{{loading}}" class="empty">正在取出这张消费小票…</view>
+ <view wx:if="{{error}}" class="error">{{error}}</view><button wx:if="{{error}}" class="btn soft" bindtap="load" disabled="{{saving || loading}}">刷新</button>
+
+ <block wx:if="{{summary}}">
+  <view class="ticket-machine">
+   <view class="machine-face"><view><view class="machine-name">消费决定打印机</view><view class="machine-caption">{{feeding ? '正在出票…' : '本次决定已留存'}}</view></view><view class="machine-light {{feeding ? 'working' : ''}}"></view></view>
+   <view class="machine-slot"></view>
+  </view>
+  <view class="paper-feed {{feedDone ? 'feed-complete' : ''}}" style="height:{{feedHeight}}px;">
+   <view class="receipt receipt-paper">
+  <view class="receipt-head"><view class="receipt-title">消费审批小票</view><view class="receipt-subtitle">好友把关 · 决定留念</view><view class="receipt-number">NO. {{receiptId}}</view></view>
+  <view class="receipt-product"><view class="receipt-label">本次考虑购买</view><view class="receipt-product-name">{{summary.item_info.description}}</view><view class="receipt-price">{{price}}</view><view class="receipt-result {{summary.result}}">{{resultLabel}}</view></view>
+  <view class="receipt-section"><view class="receipt-row"><text class="receipt-label">好友把关留言</text><text class="receipt-label">{{printedComments.length}} 条</text></view>
+   <view class="print-area"><view wx:for="{{printedComments}}" wx:key="id" class="printed-line"><text class="comment-number">{{item.id}} /</text><text class="comment-full">{{item.text}}</text></view></view>
+   <view wx:if="{{!printedComments.length}}" class="muted">暂无可展示留言</view>
+  </view>
+  <view class="receipt-section"><view class="receipt-label">购买建议</view><view wx:if="{{aiStatus === 'READY'}}" class="advice">{{summary.purchase_advice || '暂无建议'}}</view><view wx:elif="{{aiStatus === 'FAILED'}}" class="muted">购买建议暂不可用，基础总结已保留。</view><view wx:else class="muted">正在生成建议，稍后可刷新查看。</view></view>
+  <view class="receipt-footer"><view class="receipt-bars"></view><view>感谢好友认真把关</view><view class="receipt-disclaimer">仅为审批纪念，不代表实际消费凭证</view></view>
+   </view>
+  </view>
+  <view class="machine-controls"><button wx:if="{{feeding}}" class="print-control" bindtap="skipAnimation">跳过动画，查看整张小票</button><button wx:else class="print-control" bindtap="startFeed" disabled="{{saving}}">重新出票</button></view>
+ </block>
+ <view wx:if="{{!loading && !summary && !error}}" class="panel empty">总结尚未生成，请稍后刷新。</view>
+ <view class="receipt-tools stack"><button class="btn" bindtap="generate" disabled="{{saving || loading}}" loading="{{saving}}">生成小票图片</button><image wx:if="{{preview}}" src="{{preview}}" mode="widthFix" class="card-image" bindtap="previewImage"/><view wx:if="{{cardExcerpt}}" class="muted">这张图片为锐评节选，完整留言可在上方查看。</view><button wx:if="{{preview}}" class="btn soft" bindtap="saveImage">保存小票到相册</button><button wx:if="{{shareEnabled && !mock}}" class="btn soft" open-type="share">分享查看入口</button><view class="muted">页面可向下滚动查看全部可见留言；导出图片过长时会标注节选。分享查看仍需服务端权限校验。</view></view>
+ <canvas canvas-id="memorial" class="render-canvas" style="width:600px;height:{{canvasHeight}}px;"></canvas>
+</view>

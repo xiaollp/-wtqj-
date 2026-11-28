@@ -1,0 +1,2 @@
+@import "../../shared/b-theme.wxss";
+@import "./list-layout.wxss";

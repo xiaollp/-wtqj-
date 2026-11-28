@@ -1,0 +1,10 @@
+<view class="screen">
+  <view wx:if="{{mock}}" class="notice">模拟数据模式 · 小组数据仅保存在本机</view>
+  <view class="hero stack"><view class="title">消费监督小组</view><view class="muted">和熟悉的人组成小组，在购买前听听彼此的意见。</view><navigator url="/pages/groups/create"><button class="btn light">创建小组</button></navigator></view>
+  <view class="row"><view class="heading">我的小组</view><navigator url="/pages/groups/invitations" class="option">邀请记录</navigator></view>
+  <view wx:if="{{error}}" class="panel stack"><view class="error">{{error}}</view><button class="btn soft" bindtap="retry" disabled="{{loading}}">重试</button></view>
+  <navigator wx:for="{{items}}" wx:key="group_id" class="panel group-link" url="/pages/groups/detail?group_id={{item.group_id}}"><view class="row"><view class="group-name">{{item.name}}</view><text class="badge">{{item.member_count}} 人</text></view><view class="muted group-caption">查看成员与小组说明 →</view></navigator>
+  <view wx:if="{{loading}}" class="empty">正在加载小组…</view>
+  <view wx:elif="{{loaded && !items.length && !error}}" class="panel empty">还没有加入小组，创建一个邀请好友一起把关吧。</view>
+  <button wx:if="{{nextCursor}}" class="btn soft" bindtap="more" disabled="{{loading}}">加载更多</button>
+</view>

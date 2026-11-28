@@ -1,0 +1,2 @@
+@import "../../shared/b-theme.wxss";
+.group-link{display:block}.group-name{font-size:34rpx;font-weight:700;overflow-wrap:anywhere;flex:1;min-width:0}.group-caption{margin-top:16rpx}.member{display:flex;align-items:center;gap:18rpx}.member-initial{width:72rpx;height:72rpx;line-height:72rpx;text-align:center;border-radius:20rpx;background:#e1eef0;color:#00656e;flex:none}.member-name{flex:1;min-width:0;overflow-wrap:anywhere}.title{overflow-wrap:anywhere}

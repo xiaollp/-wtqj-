@@ -1,0 +1,4 @@
+<view class="screen"><view wx:if="{{mock}}" class="notice">模拟模式 · 接受仅更新本机演示小组</view>
+ <view wx:if="{{loading}}" class="empty">正在核验邀请…</view><view wx:if="{{error}}" class="panel stack"><view class="error">{{error}}</view><button class="btn soft" bindtap="load">重试</button></view>
+ <view wx:if="{{invitation}}" class="panel stack"><view class="heading">{{groupName}}</view><view>{{invitation.inviter.nickname || '微信用户'}} 邀请你加入消费监督小组。</view><view class="muted">有效期至 {{expiresText}}</view><view wx:if="{{writeError}}" class="error">{{writeError}}</view><button wx:if="{{canAccept}}" class="btn" bindtap="accept" loading="{{saving}}" disabled="{{saving}}">接受邀请</button><button wx:elif="{{invitation.status === 'ACCEPTED'}}" class="btn" bindtap="openGroup">查看小组</button><view wx:else class="notice">当前无法接受此邀请。可能已过期、达到人数上限，或邀请接收者不是你。</view></view>
+</view>

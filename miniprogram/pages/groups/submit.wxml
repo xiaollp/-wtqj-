@@ -1,0 +1,13 @@
+<view class="screen">
+ <view wx:if="{{mock}}" class="notice">模拟模式 · 提交只更新本机演示申请</view>
+ <view class="panel stack"><view class="heading">提交申请至小组</view><view wx:if="{{group}}">目标小组：{{group.name}} · {{group.member_count}} 人</view><view class="muted">选择本人待审批的普通申请。已经分享、已有审批意见或已绑定小组的申请，由服务端拒绝转入。</view></view>
+ <view wx:if="{{error}}" class="panel stack"><view class="error">{{error}}</view><button class="btn soft" bindtap="retry">重试</button></view>
+ <block wx:if="{{!result}}">
+  <block wx:for="{{items}}" wx:key="application_id"><view wx:if="{{item.eligible}}" class="panel stack"><view class="heading">{{item.description}}</view><view class="amount">{{item.priceLabel}}</view><view class="muted">{{item.deadlineLabel}} 截止</view><button class="btn soft" data-id="{{item.application_id}}" bindtap="choose" disabled="{{checking || saving}}">{{selected.application_id === item.application_id ? '已选择' : '选择这笔申请'}}</button></view></block>
+  <view wx:if="{{loading || checking}}" class="empty">正在获取申请…</view><button wx:if="{{cursor}}" class="btn soft" bindtap="more" disabled="{{loading || saving}}">更多待审批申请</button>
+  <view wx:if="{{!loading && !cursor && !selected && !error}}" class="notice">只可选择未结束的普通申请。若没有可选项，请先创建普通申请。</view>
+  <view wx:if="{{selected}}" class="panel stack"><view>已选：{{selected.description}}</view><view class="muted">页面显示的是查询时的版本，提交时仍会校验最新状态与成员。</view><button class="btn" bindtap="submit" loading="{{saving}}" disabled="{{saving || checking || !group || 2 > group.member_count}}">确认提交</button><view wx:if="{{2 > group.member_count}}" class="notice">请先邀请至少一位其他成员加入。</view></view>
+ </block>
+ <view wx:if="{{writeError}}" class="error">{{writeError}}</view>
+ <view wx:if="{{result}}" class="panel stack"><view class="heading">已提交至小组</view><view>{{result.participant_count}} 位成员获得审批资格，需全部同意才能通过。</view><view class="muted">你是申请人，不会在自己的小组待办中看到这笔申请。</view><view wx:for="{{participants}}" wx:key="userId" class="item">{{item.user.nickname}} · 待审批</view><button wx:if="{{!mock}}" class="btn" bindtap="openResult">查看申请进度</button><view wx:else class="notice">上方是本机演示成员的待审批状态。真实成员需使用各自账号查看待办。</view></view>
+</view>

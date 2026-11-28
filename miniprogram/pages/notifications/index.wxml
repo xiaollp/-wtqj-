@@ -1,0 +1,16 @@
+<view class="screen">
+ <view wx:if="{{mock}}" class="notice">模拟模式 · 授权选项仅供演示，不会申请微信权限或发送消息</view>
+ <view class="hero stack"><view class="title">消息通知设置</view><view class="muted">分别设置审批结果和小组待办提醒，重要进展及时查看。</view></view>
+ <view wx:if="{{loading}}" class="empty">正在读取设置…</view>
+ <view wx:if="{{error}}" class="panel stack"><view class="error">{{error}}</view><button class="btn soft" bindtap="load">重试</button></view>
+ <view wx:for="{{items}}" wx:key="type" class="panel stack">
+  <view class="row"><view class="heading">{{item.title}}</view><text class="badge">{{item.enabled ? '偏好已开启' : '已关闭'}}</text></view>
+  <view>{{item.description}}</view><view class="muted">{{item.authLabel}}</view><view class="form-hint">更新于 {{item.updatedLabel}}</view>
+  <button class="btn" data-type="{{item.type}}" bindtap="enable" disabled="{{saving || authorizing || pending || loading}}">{{item.enabled ? '再次申请订阅授权' : '授权并开启'}}</button>
+  <button wx:if="{{item.enabled}}" class="btn soft" data-type="{{item.type}}" bindtap="disable" disabled="{{saving || authorizing || pending || loading}}">关闭这类提醒</button>
+ </view>
+ <view wx:if="{{authorizing}}" class="empty">正在处理授权…</view><view wx:if="{{saving}}" class="empty">正在保存设置…</view>
+ <view wx:if="{{writeError}}" class="error">{{writeError}}</view><button wx:if="{{pending && !saving && !authorizing}}" class="btn soft" bindtap="savePending">重试保存本次设置</button>
+ <view wx:if="{{notice}}" class="notice">{{notice}}</view>
+ <view class="panel"><view class="heading">关于订阅提醒</view><view class="muted">开启偏好不代表持续获得消息额度。微信授权结果和实际可发送次数由平台决定。关闭提醒不会影响申请审批或小组待办查询。</view></view>
+</view>

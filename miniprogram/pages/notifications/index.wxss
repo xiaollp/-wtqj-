@@ -1,0 +1,2 @@
+@import "../../shared/b-theme.wxss";
+.title{font-size:44rpx}.heading{margin-bottom:0}.panel{overflow-wrap:anywhere}

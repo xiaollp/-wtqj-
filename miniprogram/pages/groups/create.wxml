@@ -1,0 +1,5 @@
+<view class="screen">
+ <view wx:if="{{mock}}" class="notice">模拟数据模式 · 创建结果仅保存在本机</view>
+ <view class="panel stack"><view class="heading">给小组取个名字</view><view class="muted">创建后你会自动成为第一位成员。</view><view class="field"><label class="label" for="group-name">小组名称</label><input id="group-name" class="input" placeholder="例如：宿舍理性消费组" maxlength="64" value="{{name}}" bindinput="onName" disabled="{{saving || createdId}}"/><view class="form-hint">{{name.length}} / 64</view></view><view wx:if="{{writeError}}" class="error">{{writeError}}</view><view wx:if="{{requestId}}" class="muted">请求编号 {{requestId}}</view><button wx:if="{{!createdId}}" class="btn" bindtap="submit" loading="{{saving}}" disabled="{{saving}}">创建小组</button><button wx:else class="btn" bindtap="openCreated">已创建，查看小组</button></view>
+ <view class="notice">小组申请由提交时的成员共同审批。至少有一位其他成员后，才能提交申请。</view>
+</view>
